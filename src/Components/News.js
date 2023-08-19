@@ -21,7 +21,7 @@ export class News extends Component {
     super(props);
     this.state = {
       articles: [],
-      loading: true,
+      loading: false,
       page: 1,
       totalResults: 0,
     };
@@ -30,7 +30,7 @@ export class News extends Component {
 
   async updateNews() {
     this.props.setProgress(10);
-    const url = `https://newsapi.org/v2/top-headlines?country=${this.props.country}&category=${this.props.category}&apiKey=83ae845db3dd441096a8a49744c406b3&page=${this.state.page}&pageSize=${this.props.pageSize}`;
+    const url = `https://newsapi.org/v2/top-headlines?country=${this.props.country}&category=${this.props.category}&apiKey=${this.props.apiKey}&page=${this.state.page}&pageSize=${this.props.pageSize}`;
     this.setState({ loading: true });
     let data = await fetch(url);
     this.props.setProgress(30);
@@ -48,28 +48,21 @@ export class News extends Component {
     this.updateNews();
   }
 
-  handlePrevClick = async () => {
-    this.setState({ page: this.state.page - 1 });
-    this.updateNews();
-  };
-
-  handleNextClick = async () => {
-    this.setState({ page: this.state.page + 1 });
-    this.updateNews();
-  };
-
   capitalize = (word) => {
     return word.charAt(0).toUpperCase() + word.slice(1);
   };
 
   fetchMoreData = async () => {
     this.setState({ page: this.state.page + 1 });
-    const url = `https://newsapi.org/v2/top-headlines?country=${this.props.country}&category=${this.props.category}&apiKey=83ae845db3dd441096a8a49744c406b3&page=${this.state.page}&pageSize=${this.props.pageSize}`;
+
+    const url = `https://newsapi.org/v2/top-headlines?country=${this.props.country}&category=${this.props.category}&apiKey=${this.props.apiKey}&page=${this.state.page}&pageSize=${this.props.pageSize}`;
+    this.setState({ loading: true });
     let data = await fetch(url);
     let parsedData = await data.json();
     this.setState({
       articles: this.state.articles.concat(parsedData.articles),
       totalResults: parsedData.totalResults,
+      loading: false,
     });
   };
 
@@ -86,13 +79,13 @@ export class News extends Component {
           dataLength={this.state.articles.length}
           next={this.fetchMoreData}
           hasMore={this.state.articles.length !== this.state.totalResults}
-          loader={<Spinner />}
+          loader={this.state.loading && <Spinner />}
         >
           <div className="container">
             <div className="row">
               {this.state.articles.map((element) => {
                 return (
-                  <div className="col-md-4" key={element.url}>
+                  <div className="col-md-6 col-lg-4" key={element.url}>
                     <NewsItem
                       title={element.title ? element.title.slice(0, 60) : ""}
                       desc={

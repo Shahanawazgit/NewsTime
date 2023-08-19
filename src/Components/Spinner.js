@@ -1,11 +1,11 @@
 import React, { Component } from "react";
-import Hourglass from "./Hourglass.gif";
+import Loading from "./Loading.gif";
 
 export class Spinner extends Component {
   render() {
     return (
-      <div className="text-center my-3">
-        <img src={Hourglass} alt="Hourglass" />
+      <div className="text-center my-2">
+        <img src={Loading} width="70px" height="70px" alt="Loading" />
       </div>
     );
   }
